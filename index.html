@@ -66,7 +66,7 @@
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
     <div class="step-info" id="stepInfo"></div>
 
-    <form id="intakeForm" action="https://formspree.io/f/mdawdzjn" method="POST" enctype="multipart/form-data">
+    <form id="intakeForm" action="https://formspree.io/f/mdawdzjn" method="POST" enctype="multipart/form-data" novalidate>
       <input type="hidden" name="_subject" id="subjectField" value="New Website Intake"/>
 
       <!-- Step 0: Contact -->
@@ -114,8 +114,8 @@
       <div class="step" data-step="3">
         <h2>Inspiration Sites 🔍</h2>
         <p class="sub">1–2 sites you like — what do you want from them?</p>
-        <div class="field"><label>Example Site #1</label><input type="url" name="Example Site 1" placeholder="https://…"/></div>
-        <div class="field"><label>Example Site #2</label><input type="url" name="Example Site 2" placeholder="https://…"/></div>
+        <div class="field"><label>Example Site #1</label>          <input type="text" name="Example Site 1" placeholder="https://…"/></div>
+        <div class="field"><label>Example Site #2</label><input type="text" name="Example Site 2" placeholder="https://…"/></div>
         <div class="field"><label>What do you like about them?</label><textarea name="Example Notes" rows="3" placeholder="I love how Site 1 shows pricing cards, want the booking widget from Site 2…"></textarea></div>
       </div>
 
@@ -152,7 +152,7 @@
           </div>
         </div>
         <div class="field"><label>Social Media Links</label><textarea name="Social Links" rows="3" placeholder="Instagram: @handle&#10;Facebook: facebook.com/page&#10;LinkedIn: …"></textarea></div>
-        <div class="field"><label>Describe what you want the site to do <span class="req">*</span></label><textarea name="Site Description" rows="4" placeholder="Describe your business and what visitors should be able to do…" required></textarea></div>
+        <div class="field"><label>Describe what you want the site to do</label><textarea name="Site Description" rows="4" placeholder="Describe your business and what visitors should be able to do…"></textarea></div>
         <div class="field"><label>Who is your target audience?</label><textarea name="Target Audience" rows="3" placeholder="e.g. Women 25–45, small business owners in the Southeast…"></textarea></div>
       </div>
 
@@ -176,6 +176,7 @@
   const STEPS = ["Contact","Site Type","Payments","Inspiration","Branding","Media & Details","Review"];
   let currentStep = 0;
   const MAX_BYTES = 10 * 1024 * 1024;
+  let submitting = false;
 
   // Show thank-you if Formspree redirected back with ?submitted=true
   if(new URLSearchParams(location.search).get('submitted') === 'true'){
@@ -184,13 +185,17 @@
   }
 
   // Tell Formspree where to redirect after submit
-  document.getElementById('intakeForm').addEventListener('submit', function(){
+  document.getElementById('intakeForm').addEventListener('submit', function(e){
+    if(submitting) return; // Prevent loop
+    submitting = true;
+    e.preventDefault(); // Prevent default to control validation manually
     syncChips();
     buildReview();
-    const redirect = location.origin + location.pathname + '?submitted=true';
-    const next = document.createElement('input');
+    var redirect = location.origin + location.pathname + '?submitted=true';
+    var next = document.createElement('input');
     next.type = 'hidden'; next.name = '_next'; next.value = redirect;
     this.appendChild(next);
+    this.submit(); // Submit programmatically to bypass browser validation
   });
 
   function updateProgress(){
