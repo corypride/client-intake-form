@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Website Project Intake</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#ede9fe 0%,#f0fdf4 100%);min-height:100vh;padding:32px 16px}
+  .card{background:#fff;border-radius:16px;padding:28px;max-width:560px;margin:0 auto;box-shadow:0 4px 24px rgba(0,0,0,.08)}
+  .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .title{font-size:22px;font-weight:900;color:#6d28d9;letter-spacing:-1px}
+  .subtitle{font-size:11px;color:#9ca3af}
+  .progress-labels{display:flex;justify-content:space-between;margin-bottom:6px}
+  .progress-labels span{font-size:10px;text-align:center;flex:1}
+  .progress-bar{background:#e5e7eb;border-radius:999px;height:6px;margin-bottom:4px}
+  .progress-fill{background:linear-gradient(90deg,#6d28d9,#a78bfa);height:100%;border-radius:999px;transition:width .3s}
+  .step-info{text-align:right;font-size:11px;color:#6b7280;margin-bottom:20px}
+  .step{display:none}.step.active{display:block}
+  h2{margin-bottom:4px;color:#1f2937;font-size:20px}
+  .sub{color:#6b7280;font-size:13px;margin-bottom:20px}
+  label{display:block;font-weight:600;font-size:13px;color:#374151;margin-bottom:6px}
+  input[type=text],input[type=email],input[type=tel],input[type=url],textarea{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid #d1d5db;font-size:14px;outline:none;font-family:inherit;transition:border-color .2s}
+  input:focus,textarea:focus{border-color:#6d28d9}
+  textarea{resize:vertical}
+  .field{margin-bottom:16px}
+  .chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px}
+  .chip{padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;border:2px solid #e5e7eb;background:#f9fafb;color:#374151;font-weight:500;font-family:inherit}
+  .chip.selected{border-color:#6d28d9;background:#ede9fe;color:#6d28d9;font-weight:700}
+  .nav{display:flex;justify-content:space-between;margin-top:28px}
+  .btn-primary{background:linear-gradient(135deg,#6d28d9,#8b5cf6);color:#fff;border:none;border-radius:10px;padding:10px 24px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
+  .btn-outline{background:#fff;color:#6d28d9;border:2px solid #6d28d9;border-radius:10px;padding:10px 24px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
+  .alert{background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:10px 14px;font-size:13px;color:#374151;margin-top:8px}
+  .review-row{display:flex;gap:8px;margin-bottom:8px;border-bottom:1px solid #e5e7eb;padding-bottom:8px;font-size:13px}
+  .review-label{font-weight:700;min-width:100px;color:#6d28d9;flex-shrink:0}
+  .review-val{word-break:break-word;color:#374151}
+  .logo-preview{max-height:70px;margin-top:8px;border-radius:6px;border:1px solid #e5e7eb;display:none}
+  .req{color:#ef4444}
+  /* Thank you screen */
+  #thankYou{display:none;text-align:center;padding:20px 0}
+  #thankYou .big{font-size:56px;margin-bottom:12px}
+  #thankYou h2{color:#6d28d9;margin-bottom:8px}
+  #thankYou p{color:#6b7280;font-size:14px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div>
+      <div class="title">🖥️ New Website Project</div>
+      <div class="subtitle">Client Intake Form</div>
+    </div>
+  </div>
+
+  <!-- Thank You Screen (shown after Formspree redirects back) -->
+  <div id="thankYou">
+    <div class="big">🎉</div>
+    <h2>Submitted!</h2>
+    <p>Your info has been received.<br/>We'll be in touch soon.</p>
+    <button class="btn-primary" style="margin-top:20px" onclick="resetForm()">Start New</button>
+  </div>
+
+  <!-- Progress -->
+  <div id="formWrapper">
+    <div class="progress-labels" id="progressLabels"></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="step-info" id="stepInfo"></div>
+
+    <form id="intakeForm" action="https://formspree.io/f/mdawdzjn" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="_subject" id="subjectField" value="New Website Intake"/>
+
+      <!-- Step 0: Contact -->
+      <div class="step active" data-step="0">
+        <h2>Let's get started 👋</h2>
+        <p class="sub">Basic contact info so we can reach you.</p>
+        <div class="field"><label>Your Name <span class="req">*</span></label><input type="text" name="Client Name" id="clientName" placeholder="Full name" required/></div>
+        <div class="field"><label>Email Address <span class="req">*</span></label><input type="email" name="Client Email" id="clientEmail" placeholder="you@example.com" required/></div>
+        <div class="field"><label>Phone Number</label><input type="tel" name="Phone" placeholder="(555) 000-0000"/></div>
+      </div>
+
+      <!-- Step 1: Site Type -->
+      <div class="step" data-step="1">
+        <h2>What type of site? 🌐</h2>
+        <p class="sub">Select all that apply.</p>
+        <div class="chips">
+          <button type="button" class="chip" data-group="siteType">📅 Booking Site</button>
+          <button type="button" class="chip" data-group="siteType">🛒 E-Store</button>
+          <button type="button" class="chip" data-group="siteType">📝 Blog / Content Site</button>
+          <button type="button" class="chip" data-group="siteType">🎨 Portfolio</button>
+          <button type="button" class="chip" data-group="siteType">🏢 Business / Corporate</button>
+          <button type="button" class="chip" data-group="siteType">🔀 Hybrid</button>
+        </div>
+        <input type="hidden" name="Site Type(s)" id="siteTypesInput"/>
+      </div>
+
+      <!-- Step 2: Payments -->
+      <div class="step" data-step="2">
+        <h2>Payment Options 💳</h2>
+        <p class="sub">Select all you want to accept.</p>
+        <div class="chips">
+          <button type="button" class="chip" data-group="payment">Stripe</button>
+          <button type="button" class="chip" data-group="payment">PayPal</button>
+          <button type="button" class="chip" data-group="payment">Square</button>
+          <button type="button" class="chip" data-group="payment">Cash App</button>
+          <button type="button" class="chip" data-group="payment">Venmo</button>
+          <button type="button" class="chip" data-group="payment">Zelle</button>
+          <button type="button" class="chip" data-group="payment">Other / Not Sure</button>
+        </div>
+        <input type="hidden" name="Payment Options" id="paymentInput"/>
+        <div class="field"><label>Existing accounts already set up</label><textarea name="Existing Accounts" rows="3" placeholder="e.g. Stripe under business@email.com, PayPal linked to bank…"></textarea></div>
+      </div>
+
+      <!-- Step 3: Inspiration -->
+      <div class="step" data-step="3">
+        <h2>Inspiration Sites 🔍</h2>
+        <p class="sub">1–2 sites you like — what do you want from them?</p>
+        <div class="field"><label>Example Site #1</label><input type="url" name="Example Site 1" placeholder="https://…"/></div>
+        <div class="field"><label>Example Site #2</label><input type="url" name="Example Site 2" placeholder="https://…"/></div>
+        <div class="field"><label>What do you like about them?</label><textarea name="Example Notes" rows="3" placeholder="I love how Site 1 shows pricing cards, want the booking widget from Site 2…"></textarea></div>
+      </div>
+
+      <!-- Step 4: Branding -->
+      <div class="step" data-step="4">
+        <h2>Branding 🎨</h2>
+        <p class="sub">Logo and colors set the whole tone.</p>
+        <div class="field">
+          <label>Upload Your Logo (under 10 MB)</label>
+          <input type="file" name="Logo File" id="logoUpload" accept="image/*" onchange="handleLogoChange(this)"/>
+          <img class="logo-preview" id="logoPreview"/>
+          <div class="alert" id="logoAlert" style="display:none"></div>
+          <div id="logoLinkField" style="display:none;margin-top:8px">
+            <label>Google Drive share link for logo</label>
+            <input type="url" name="Logo Share Link" placeholder="https://drive.google.com/…"/>
+          </div>
+        </div>
+        <div class="field"><label>Brand Colors</label><input type="text" name="Brand Colors" placeholder="Navy blue, gold, white — or hex codes like #1E3A5F"/></div>
+        <div class="field"><label>Color Notes / Vibe</label><textarea name="Color Notes" rows="2" placeholder="Bold? Calm? Professional? Energetic?"></textarea></div>
+      </div>
+
+      <!-- Step 5: Media & Details -->
+      <div class="step" data-step="5">
+        <h2>Media & Details 📁</h2>
+        <p class="sub">Upload files or share links for large ones.</p>
+        <div class="field">
+          <label>Upload Media Files (under 10 MB each)</label>
+          <input type="file" name="Media Files" multiple accept="image/*,video/*,audio/*" onchange="handleMediaChange(this)"/>
+          <div id="mediaFileList" style="font-size:12px;color:#6b7280;margin-top:6px"></div>
+          <div class="alert" id="mediaAlert" style="display:none"></div>
+          <div id="mediaLinkField" style="display:none;margin-top:8px">
+            <label>Google Drive share link for media</label>
+            <input type="url" name="Media Share Link" placeholder="https://drive.google.com/…"/>
+          </div>
+        </div>
+        <div class="field"><label>Social Media Links</label><textarea name="Social Links" rows="3" placeholder="Instagram: @handle&#10;Facebook: facebook.com/page&#10;LinkedIn: …"></textarea></div>
+        <div class="field"><label>Describe what you want the site to do <span class="req">*</span></label><textarea name="Site Description" rows="4" placeholder="Describe your business and what visitors should be able to do…" required></textarea></div>
+        <div class="field"><label>Who is your target audience?</label><textarea name="Target Audience" rows="3" placeholder="e.g. Women 25–45, small business owners in the Southeast…"></textarea></div>
+      </div>
+
+      <!-- Step 6: Review -->
+      <div class="step" data-step="6">
+        <h2>Review & Submit ✅</h2>
+        <p class="sub">Look good? Hit submit.</p>
+        <div id="reviewContent" style="background:#f9fafb;border-radius:10px;padding:16px"></div>
+      </div>
+
+      <div class="nav">
+        <button type="button" class="btn-outline" id="backBtn" onclick="changeStep(-1)" style="visibility:hidden">← Back</button>
+        <button type="button" class="btn-primary" id="nextBtn" onclick="changeStep(1)">Next →</button>
+        <button type="submit" class="btn-primary" id="submitBtn" style="display:none">✅ Submit</button>
+      </div>
+    </form>
+  </div><!-- /formWrapper -->
+</div><!-- /card -->
+
+<script>
+  const STEPS = ["Contact","Site Type","Payments","Inspiration","Branding","Media & Details","Review"];
+  let currentStep = 0;
+  const MAX_BYTES = 10 * 1024 * 1024;
+
+  // Show thank-you if Formspree redirected back with ?submitted=true
+  if(new URLSearchParams(location.search).get('submitted') === 'true'){
+    document.getElementById('formWrapper').style.display = 'none';
+    document.getElementById('thankYou').style.display = 'block';
+  }
+
+  // Tell Formspree where to redirect after submit
+  document.getElementById('intakeForm').addEventListener('submit', function(){
+    syncChips();
+    buildReview();
+    const redirect = location.origin + location.pathname + '?submitted=true';
+    const next = document.createElement('input');
+    next.type = 'hidden'; next.name = '_next'; next.value = redirect;
+    this.appendChild(next);
+  });
+
+  function updateProgress(){
+    const labels = document.getElementById('progressLabels');
+    labels.innerHTML = STEPS.map((s,i) =>
+      `<span style="color:${i<=currentStep?'#6d28d9':'#9ca3af'};font-weight:${i===currentStep?700:400}">${s}</span>`
+    ).join('');
+    document.getElementById('progressFill').style.width = `${((currentStep+1)/STEPS.length)*100}%`;
+    document.getElementById('stepInfo').textContent = `Step ${currentStep+1} of ${STEPS.length}`;
+    document.getElementById('backBtn').style.visibility = currentStep===0 ? 'hidden' : 'visible';
+    document.getElementById('nextBtn').style.display = currentStep < STEPS.length-1 ? '' : 'none';
+    document.getElementById('submitBtn').style.display = currentStep === STEPS.length-1 ? '' : 'none';
+  }
+
+  function showStep(n){
+    document.querySelectorAll('.step').forEach((s,i) => s.classList.toggle('active', i===n));
+    if(n === STEPS.length-1) buildReview();
+    updateProgress();
+    window.scrollTo(0,0);
+  }
+
+  function changeStep(dir){
+    const next = currentStep + dir;
+    if(next < 0 || next >= STEPS.length) return;
+    if(dir > 0 && !validateStep()) return;
+    syncChips();
+    currentStep = next;
+    showStep(currentStep);
+  }
+
+  function validateStep(){
+    if(currentStep===0){
+      const n = document.querySelector('[name="Client Name"]').value.trim();
+      const e = document.querySelector('[name="Client Email"]').value.trim();
+      if(!n||!e){ alert('Please fill in your name and email.'); return false; }
+    }
+    if(currentStep===1){
+      if(!document.getElementById('siteTypesInput').value){ alert('Please select at least one site type.'); return false; }
+    }
+    return true;
+  }
+
+  function syncChips(){
+    const site = [...document.querySelectorAll('.chip[data-group="siteType"].selected')].map(c=>c.textContent.trim());
+    document.getElementById('siteTypesInput').value = site.join(', ');
+    const pay = [...document.querySelectorAll('.chip[data-group="payment"].selected')].map(c=>c.textContent.trim());
+    document.getElementById('paymentInput').value = pay.join(', ') || '—';
+  }
+
+  document.querySelectorAll('.chip').forEach(c => {
+    c.addEventListener('click', () => { c.classList.toggle('selected'); syncChips(); });
+  });
+
+  function handleLogoChange(input){
+    const file = input.files[0]; if(!file) return;
+    const al = document.getElementById('logoAlert');
+    const lf = document.getElementById('logoLinkField');
+    const pr = document.getElementById('logoPreview');
+    if(file.size > MAX_BYTES){
+      al.textContent = `⚠️ "${file.name}" is over 10 MB. Please share via Google Drive link below.`;
+      al.style.display='block'; lf.style.display='block'; pr.style.display='none';
+      input.value='';
+    } else {
+      al.style.display='none'; lf.style.display='none';
+      const r = new FileReader();
+      r.onload = e => { pr.src=e.target.result; pr.style.display='block'; };
+      r.readAsDataURL(file);
+    }
+  }
+
+  function handleMediaChange(input){
+    const files = Array.from(input.files);
+    const al = document.getElementById('mediaAlert');
+    const lf = document.getElementById('mediaLinkField');
+    const li = document.getElementById('mediaFileList');
+    if(files.some(f => f.size > MAX_BYTES)){
+      al.textContent='⚠️ One or more files exceed 10 MB. Please share via Google Drive link below.';
+      al.style.display='block'; lf.style.display='block'; li.textContent=''; input.value='';
+    } else {
+      al.style.display='none'; lf.style.display='none';
+      li.textContent = files.map(f=>f.name).join(' · ');
+    }
+  }
+
+  function buildReview(){
+    const get = name => { const el=document.querySelector(`[name="${name}"]`); return el?el.value.trim()||'—':'—'; };
+    const rows = [
+      ['Name',        get('Client Name')],
+      ['Email',       get('Client Email')],
+      ['Phone',       get('Phone')],
+      ['Site Type(s)',document.getElementById('siteTypesInput').value||'—'],
+      ['Payments',    document.getElementById('paymentInput').value||'—'],
+      ['Example 1',   get('Example Site 1')],
+      ['Example 2',   get('Example Site 2')],
+      ['Colors',      get('Brand Colors')],
+    ];
+    document.getElementById('reviewContent').innerHTML =
+      rows.map(([l,v]) => `<div class="review-row"><span class="review-label">${l}:</span><span class="review-val">${v}</span></div>`).join('')
+      + '<div style="font-size:12px;color:#6b7280;margin-top:4px">+ social links, site description, and target audience captured ✓</div>';
+    document.getElementById('subjectField').value = `New Website Intake — ${get('Client Name')}`;
+  }
+
+  function resetForm(){
+    location.href = location.origin + location.pathname;
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>
